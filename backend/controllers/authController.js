@@ -1,0 +1,45 @@
+const User = require('../model/User');
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+};
+
+const registerUser = async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingerUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedpassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({ name, email, password });
+    if (user) {
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+      const message = `
+      Welcome to Ecommerce, ${name}!
+      Thank you for registering with us. We are excited to have you on board.
+      Your OTP for Ecommerce registration is: ${otp}`;
+      res.status(201).json({ message: "User registered successfully", otp });
+
+      await sendEmail(email, 'welcome to Ecommerce - OTP for registration', message);
+
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user._id)
+      });
+    }
+    else{
+      res.status(400).json({ message: "Invalid user data" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error registering user" });
+  }
+};
+
