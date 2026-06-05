@@ -4,4 +4,4 @@ const { registerUser, loginUser, logoutUser } = require('../controllers/authCont
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/user", logoutUser);
+router.get("/user", Protect, admin, getUsers);
